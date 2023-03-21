@@ -1,48 +1,75 @@
 import React from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { useEffect,useState,useRef } from 'react';
 
-class Autocomplete extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      inputVal: '',
-      showList: false
-    };
-    this.inputRef = React.createRef();
-  }
+const Autocomplete = (props) => {
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     inputVal: '',
+  //     showList: false
+  //   };
+  //   this.inputRef = React.createRef();
+  // }
+// const [currentState,setCurrentState] = useState({inputVal: '',showList:false})
+const [inputVal,setinputVal] = useState("")
+const [showList,setShowList] = useState(false)
+const inputRef = useRef();
+  // componentDidUpdate() {
+  //   if (this.state.showList) {
+  //     document.addEventListener('click', this.handleOutsideClick);
+  //   } else {
+  //     console.log("Removing Autocomplete listener on update!");
+  //     document.removeEventListener('click', this.handleOutsideClick);
+  //   }
+  // }
 
-  componentDidUpdate() {
-    if (this.state.showList) {
-      document.addEventListener('click', this.handleOutsideClick);
-    } else {
+  
+
+  // componentWillUnmount () {
+  //   console.log("Cleaning up event listener from Autocomplete!");
+  //   document.removeEventListener('click',handleOutsideClick);
+  // }
+  useEffect (()=> {
+    if (showList)
+      document.addEventListener('click', handleOutsideClick);
+    else {
       console.log("Removing Autocomplete listener on update!");
-      document.removeEventListener('click', this.handleOutsideClick);
+      document.removeEventListener('click', handleOutsideClick);
     }
-  }
-
-  componentWillUnmount () {
+      
+    return (() => {
+      console.log("Cleaning up event listener from Autocomplete!");
+      document.removeEventListener('click', handleOutsideClick)
+    });
+  }, [showList]);
+  
+  useEffect(()=>{
     console.log("Cleaning up event listener from Autocomplete!");
-    document.removeEventListener('click', this.handleOutsideClick);
+    document.removeEventListener('click',handleOutsideClick);
+  },[])
+
+  const handleInput = (e) => {
+    setinputVal(e.target.value );
   }
 
-  handleInput = (e) => {
-    this.setState({ inputVal: e.target.value });
-  }
-
-  selectName = e => {
+  const selectName = e => {
     e.stopPropagation();
-    this.setState({ inputVal: e.target.innerHTML, showList: false });
+    // setCurrentState({ inputVal: e.target.innerHTML, showList: false });
+    setinputVal(e.target.innerHTML)
+    setShowList(false)
   }
 
-  handleOutsideClick = () => {
+  const handleOutsideClick = () => {
     // Leave dropdown visible as long as input is focused
-    if (document.activeElement === this.inputRef.current) return;
-    else this.setState({ showList: false });
+    if (document.activeElement ===inputRef.current) return;
+    else setShowList(false)
   }
 
-  matches = () => {
-    const { inputVal } = this.state;
-    const { names } = this.props;
+  const matches = () => {
+    // const inputVal  = currentState.inputVal;
+    const names  = props.names;
+    // debugger
     const inputLength = inputVal.length;
     const matches = [];
 
@@ -50,7 +77,7 @@ class Autocomplete extends React.Component {
 
     names.forEach(name => {
       const nameSegment = name.slice(0, inputLength);
-      if (nameSegment.toLowerCase() === inputVal.toLowerCase()) {
+      if (nameSegment.toLowerCase() ===inputVal.toLowerCase()) {
         matches.push(name);
       }
     });
@@ -60,8 +87,8 @@ class Autocomplete extends React.Component {
     return matches;
   }
 
-  render() {
-    const results = this.matches().map((result) => {
+  // render() {
+    const results = matches().map((result) => {
       const nodeRef = React.createRef();
       return (
         <CSSTransition
@@ -70,7 +97,7 @@ class Autocomplete extends React.Component {
           classNames="result"
           timeout={{ enter: 500, exit: 300 }}
         >
-          <li ref={nodeRef} className="nameLi" onClick={this.selectName}>
+          <li ref={nodeRef} className="nameLi" onClick={selectName}>
             {result}
           </li>
         </CSSTransition>
@@ -83,12 +110,12 @@ class Autocomplete extends React.Component {
         <div className="auto">
           <input
             placeholder="Search..."
-            ref={this.inputRef}
-            onChange={this.handleInput}
-            value={this.state.inputVal}
-            onFocus={() => this.setState({ showList: true })}
+            ref={inputRef}
+            onChange={handleInput}
+            value={inputVal}
+            onFocus={() => setShowList({ showList: true })}
           />
-          {this.state.showList && (
+          {showList && (
             <ul className="auto-dropdown">
               <TransitionGroup>
                 {results}
@@ -99,6 +126,6 @@ class Autocomplete extends React.Component {
       </section>
     );
   }
-}
+// }
 
 export default Autocomplete;
