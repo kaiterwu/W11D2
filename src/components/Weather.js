@@ -9,7 +9,7 @@ const Weather= () => {
       //     weather: null
       //   };
       // }
-      const[theWeather,setTheWeather] = useState({weather:null})
+      const[theWeather,setTheWeather] = useState(null)
 
       useEffect(()=>{
             const pollWeather = async (location) => {
@@ -30,7 +30,7 @@ const Weather= () => {
                 const res = await fetch(url);
                 if (res.ok) {
                   const weather = await res.json();
-                  setTheWeather( {weather} );
+                  setTheWeather( weather);
                 }
                 else {
                   alert ("Check Weather API key!")
@@ -40,7 +40,7 @@ const Weather= () => {
             },[])
               
               // render() {
-                const weather = theWeather.weather;
+                const weather = theWeather;
                 let content = <div className='loading'>loading weather...</div>;
     
     if (weather) {

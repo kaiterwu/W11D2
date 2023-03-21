@@ -1,49 +1,58 @@
 import React from 'react';
+import { useState,useEffect } from 'react';
 
-export class ClockToggle extends React.Component {
-  render () {
+export const ClockToggle = ({toggleClock})=>{
+  // render () {
     return (
       <button 
         type="button"
         className="clock-toggle" 
-        onClick={this.props.toggleClock}
+        onClick={toggleClock}
       >
         Toggle Clock
       </button>
     )
   }
-} 
+// } 
 
-class Clock extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      time: new Date(),
-    };
-  }
+const Clock = ()=> {
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     time: new Date(),
+  //   };
+  // }
+  const [currentTime,setCurrentTime] = useState(new Date())
+  // componentDidMount() {
+  //   this.interval = setInterval(this.tick, 1000);
+  // }
+
+  useEffect(()=>{
+    const timeRequest = setInterval(tick,1000)
+    return ()=>{
+      clearInterval(timeRequest)
+    }
+  },[])
   
-  componentDidMount() {
-    this.interval = setInterval(this.tick, 1000);
-  }
+  // componentWillUnmount() {
+  //   console.log("Clearing Clock interval!")
+  //   clearInterval(this.interval);
+  // }
   
-  componentWillUnmount() {
-    console.log("Clearing Clock interval!")
-    clearInterval(this.interval);
-  }
   
-  tick = () => {
-    this.setState({ time: new Date() });
+  const tick = () => {
+    setCurrentTime(new Date());
   }
 
-  render() {
-    let hours = this.state.time.getHours();
-    let minutes = this.state.time.getMinutes();
-    let seconds = this.state.time.getSeconds();
+  // render() {
+    let hours = currentTime.getHours();
+    let minutes = currentTime.getMinutes();
+    let seconds = currentTime.getSeconds();
     hours = (hours < 10) ? `0${hours}` : hours;
     minutes = (minutes < 10) ? `0${minutes}` : minutes;
     seconds = (seconds < 10) ? `0${seconds}` : seconds;
 
-    const timezone = this.state.time
+    const timezone = currentTime
       .toTimeString() // Form: "14:39:07 GMT-0600 (PDT)"
       .replace(/[^A-Z]/g, "") // Strip out all but capitals
       .slice(3); // Eliminate initial GMT
@@ -65,13 +74,13 @@ class Clock extends React.Component {
               Date: 
             </span>
             <span>
-              {this.state.time.toDateString()}
+              {currentTime.toDateString()}
             </span>
           </p>
         </div>
       </section>
     );
   }
-}
+// }
 
 export default Clock;
