@@ -3,6 +3,7 @@ import Clock, { ClockToggle } from './components/Clock';
 import Folder from './components/Folder';
 import Weather from './components/Weather';
 import Autocomplete from './components/Autocomplete';
+import { useState } from 'react';
 
 const names = [
   'Abba',
@@ -21,27 +22,28 @@ const folders = [
   { title: 'three', content: 'Third folder here' }
 ];
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showClock: true
-    };
-  }
+function App () {
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     showClock: true
+  //   };
+  // }
+  const [showClock,SetShowClock] = useState(true)
   
-  toggleClock = () => this.setState({ showClock: !this.state.showClock });
+  const toggleClock = () => SetShowClock( !showClock );
   
-  render () {
+  // render () {
     return (
       <div className="widgets">
         <Folder folders={folders} />
         <Weather />
-        <ClockToggle toggleClock={this.toggleClock} />
-        {this.state.showClock && <Clock />}
+        <ClockToggle toggleClock={toggleClock} />
+        {showClock && <Clock />}
         <Autocomplete names={names} />
       </div>
     );
   }
-}
+// }
 
 export default App;
